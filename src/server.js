@@ -18,8 +18,8 @@ const bootstrap = async () => {
   const app = express();
 
   app.use(logger);
-  app.use(cors());
   app.use(express.json());
+  app.use(cors());
 
   app.use(notesRouter);
 
@@ -31,7 +31,4 @@ const bootstrap = async () => {
   });
 };
 
-bootstrap().catch((error) => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-});
+bootstrap();

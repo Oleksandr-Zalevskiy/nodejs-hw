@@ -13,7 +13,7 @@ dotenv.config();
 const PORT = Number(process.env.PORT) || 3000;
 
 const bootstrap = async () => {
-  connectMongoDB();
+  await connectMongoDB();
 
   const app = express();
 

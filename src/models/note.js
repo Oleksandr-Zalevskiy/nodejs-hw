@@ -6,10 +6,12 @@ const noteSchema = new Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
     },
     content: {
       type: String,
       default: '',
+      trim: true,
     },
     tag: {
       type: String,
@@ -25,4 +27,4 @@ const noteSchema = new Schema(
 
 noteSchema.index({ title: 'text', content: 'text' });
 
-export const Note = model('note', noteSchema);
+export const Note = model('Note', noteSchema);

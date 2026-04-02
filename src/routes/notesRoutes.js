@@ -18,10 +18,14 @@ import {
 
 const router = express.Router();
 
-router.get('/', celebrate(getAllNotesSchema), getAllNotesController);
-router.get('/:noteId', celebrate(noteIdSchema), getNoteByIdController);
-router.post('/', celebrate(createNoteSchema), createNoteController);
-router.delete('/:noteId', celebrate(noteIdSchema), deleteNoteController);
-router.patch('/:noteId', celebrate(updateNoteSchema), updateNoteController);
+router.get('/notes', celebrate(getAllNotesSchema), getAllNotesController);
+router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteByIdController);
+router.post('/notes', celebrate(createNoteSchema), createNoteController);
+router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNoteController);
+router.patch(
+  '/notes/:noteId',
+  celebrate(updateNoteSchema),
+  updateNoteController,
+);
 
 export default router;

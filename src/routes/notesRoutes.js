@@ -15,7 +15,7 @@ import {
   createNoteSchema,
   updateNoteSchema,
   noteIdSchema,
-} from '../validations/noteValidation.js';
+} from '../validations/notevalidation.js';
 
 const router = Router();
 

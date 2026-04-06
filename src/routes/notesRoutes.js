@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Segments } from 'celebrate';
 
-// Додаємо імпорт authenticate (перевірте шлях до middleware!)
 import { authenticate } from '../middleware/authenticate.js';
 
 import {
@@ -16,11 +15,10 @@ import {
   createNoteSchema,
   updateNoteSchema,
   noteIdSchema,
-} from '../validations/notevalidation.js';
+} from '../validations/noteValidation.js';
 
 const router = Router();
 
-// Мідлвара для перевірки токена
 router.use(authenticate);
 
 router.get('/', getAllNotes);

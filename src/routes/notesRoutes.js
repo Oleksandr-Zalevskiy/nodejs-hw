@@ -9,7 +9,7 @@ import {
   deleteNote,
 } from '../controllers/notesController.js';
 
-import { someValidator } from '../validations/notevalidation.js';
+import { someValidator } from '../validations/noteValidation.js';
 import {
   createNoteSchema,
   updateNoteSchema,

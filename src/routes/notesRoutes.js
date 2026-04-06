@@ -6,7 +6,6 @@ import {
   updateNote,
   deleteNote,
 } from '../controllers/notesController.js';
-import authenticate from '../middleware/authenticate.js';
 import isValidId from '../middlewares/isValidId.js';
 
 const notesRouter = Router();

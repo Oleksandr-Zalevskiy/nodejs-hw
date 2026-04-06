@@ -30,6 +30,4 @@ const sessionSchema = new Schema(
   },
 );
 
-const Session = model('Session', sessionSchema);
-
 export const Session = model('Session', sessionSchema);

@@ -1,49 +1,46 @@
 import { Router } from 'express';
-import { celebrate, Segments } from 'celebrate';
-
-import { authenticate } from '../middleware/authenticate.js';
-
-import {
-  getAllNotes,
-  getNoteById,
-  createNote,
-  updateNote,
-  deleteNote,
-} from '../controllers/notesController.js';
-
+import { celebrate } from 'celebrate';
+import * as notesController from '../controllers/notesController.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import {
   createNoteSchema,
   updateNoteSchema,
   noteIdSchema,
+  getAllNotesSchema,
 } from '../validations/notesValidation.js';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', getAllNotes);
+router.get(
+  '/',
+  celebrate({ query: getAllNotesSchema }),
+  notesController.getAllNotes,
+);
 
 router.get(
   '/:noteId',
-  celebrate({ [Segments.PARAMS]: noteIdSchema }),
-  getNoteById,
+  celebrate({ params: noteIdSchema }),
+  notesController.getNoteById,
 );
 
-router.post('/', celebrate({ [Segments.BODY]: createNoteSchema }), createNote);
+router.post(
+  '/',
+  celebrate({ body: createNoteSchema }),
+  notesController.createNote,
+);
 
 router.patch(
   '/:noteId',
-  celebrate({
-    [Segments.PARAMS]: noteIdSchema,
-    [Segments.BODY]: updateNoteSchema,
-  }),
-  updateNote,
+  celebrate({ params: noteIdSchema, body: updateNoteSchema }),
+  notesController.updateNote,
 );
 
 router.delete(
   '/:noteId',
-  celebrate({ [Segments.PARAMS]: noteIdSchema }),
-  deleteNote,
+  celebrate({ params: noteIdSchema }),
+  notesController.deleteNote,
 );
 
 export default router;

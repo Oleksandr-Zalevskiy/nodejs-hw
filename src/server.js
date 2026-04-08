@@ -1,42 +1,41 @@
 import express from 'express';
+import pino from 'pino-http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { errors } from 'celebrate';
+import createHttpError from 'http-errors';
 
-import notesRouter from './routes/notesRoutes.js';
-import authRouter from './routes/authRoutes.js';
+import { env } from './utils/env.js';
+import { connectMongoDB } from './db/initMongoConnection.js';
+import { logger } from './utils/logger.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
-import connectMongoDB from './db/connectMongoDB.js';
+const PORT = Number(env('PORT', '3000'));
 
-import logger from './middleware/logger.js';
-import notFoundHandler from './middleware/notFoundHandler.js';
-import errorHandler from './middleware/errorHandler.js';
+export const startServer = async () => {
+  const app = express();
 
-dotenv.config();
+  app.use(express.json());
+  app.use(cors());
+  app.use(cookieParser());
+  app.use(
+    pino({
+      logger,
+    }),
+  );
 
-const app = express();
+  app.use(authRoutes);
+  app.use(notesRoutes);
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  }),
-);
+  app.use(errors());
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(logger);
+  app.use('*', notFoundHandler);
+  app.use(errorHandler);
 
-app.use('/notes', notesRouter);
-app.use('/auth', authRouter);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
-
-const PORT = process.env.PORT || 3000;
-
-await connectMongoDB();
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};

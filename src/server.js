@@ -3,39 +3,40 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
 
-import { env } from './utils/env.js';
-import { connectMongoDB } from './db/connectMongoDB.js'; // Змінено назву файлу
-import { logger } from './middleware/logger.js'; // Іменований імпорт та назва папки
-import { notFoundHandler } from './middleware/notFoundHandler.js'; // Назва папки
-import { errorHandler } from './middleware/errorHandler.js'; // Назва папки
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 import notesRoutes from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 
-const PORT = Number(env('PORT', '3000'));
+const PORT = Number(process.env.PORT) || 3000;
 
 export const startServer = async () => {
   const app = express();
 
-  // 1. Очікуємо підключення до MongoDB ПЕРЕД запуском сервера (вимога ментора)
+  // Підключення до MongoDB перед стартом сервера
   await connectMongoDB();
 
-  app.use(express.json());
   app.use(cors());
+  app.use(express.json());
   app.use(cookieParser());
 
-  // Використовуємо кастомний logger напряму (без pino-http, якщо так просить специфікація)
+  // Logger
   app.use(logger);
 
-  app.use(authRoutes);
-  app.use(notesRoutes);
+  // Routes
+  app.use('/auth', authRoutes);
+  app.use('/notes', notesRoutes);
 
-  // Обробка помилок celebrate
+  // Celebrate errors
   app.use(errors());
 
-  // Обробник notFound без '*' (просто як middleware)
+  // Not found handler
   app.use(notFoundHandler);
 
+  // Global error handler
   app.use(errorHandler);
 
   app.listen(PORT, () => {

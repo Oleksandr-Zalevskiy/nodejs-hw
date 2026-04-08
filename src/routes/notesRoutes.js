@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
 import * as notesController from '../controllers/notesController.js';
-import { authenticate } from '../middlewares/authenticate.js';
+import { authenticate } from '../middleware/authenticate.js'; // ВИПРАВЛЕНО: middleware замість middlewares
 import {
   createNoteSchema,
   updateNoteSchema,
@@ -18,25 +18,21 @@ router.get(
   celebrate({ query: getAllNotesSchema }),
   notesController.getAllNotes,
 );
-
 router.get(
   '/:noteId',
   celebrate({ params: noteIdSchema }),
   notesController.getNoteById,
 );
-
 router.post(
   '/',
   celebrate({ body: createNoteSchema }),
   notesController.createNote,
 );
-
 router.patch(
   '/:noteId',
   celebrate({ params: noteIdSchema, body: updateNoteSchema }),
   notesController.updateNote,
 );
-
 router.delete(
   '/:noteId',
   celebrate({ params: noteIdSchema }),

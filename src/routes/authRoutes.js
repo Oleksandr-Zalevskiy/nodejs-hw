@@ -1,35 +1,19 @@
 import { Router } from 'express';
-import { celebrate, Segments } from 'celebrate';
 import {
-  registerUser,
-  loginUser,
-  refreshUserSession,
-  logoutUser,
+  registerController,
+  loginController,
 } from '../controllers/authController.js';
-import {
-  registerUserSchema,
-  loginUserSchema,
-} from '../validations/authValidation.js';
+import { authenticate } from '../middleware/authenticate.js';
 
-const authRouter = Router();
+export const authRouter = Router();
 
-authRouter.post(
-  '/register',
-  celebrate({
-    [Segments.BODY]: registerUserSchema,
-  }),
-  registerUser,
-);
+// реєстрація користувача
+authRouter.post('/register', registerController);
 
-authRouter.post(
-  '/login',
-  celebrate({
-    [Segments.BODY]: loginUserSchema,
-  }),
-  loginUser,
-);
+// логін користувача
+authRouter.post('/login', loginController);
 
-authRouter.post('/refresh', refreshUserSession);
-authRouter.post('/logout', logoutUser);
-
-export default authRouter;
+// приклад приватного маршруту
+authRouter.get('/me', authenticate, (req, res) => {
+  res.json({ user: req.user });
+});

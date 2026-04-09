@@ -8,7 +8,7 @@ export const connectMongoDB = async () => {
 
   console.log('MongoDB env:', {
     user,
-    pwd: pwd ? 'SET' : 'NOT SET',
+    pwd: pwd ? 'SET' : 'NOT SET',git 
     url,
     db,
   });

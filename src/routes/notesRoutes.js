@@ -20,28 +20,27 @@ router.get(
   celebrate({ query: getAllNotesSchema }),
   notesController.getAllNotes,
 );
-
 router.get(
   '/:noteId',
   celebrate({ params: noteIdSchema }),
   notesController.getNoteById,
 );
 
+// POST /notes
 router.post(
   '/',
   celebrate({ body: createNoteSchema }),
   notesController.createNote,
 );
 
+// PATCH /notes/:noteId
 router.patch(
   '/:noteId',
-  celebrate({
-    params: noteIdSchema,
-    body: updateNoteSchema,
-  }),
+  celebrate({ params: noteIdSchema, body: updateNoteSchema }),
   notesController.updateNote,
 );
 
+// DELETE /notes/:noteId
 router.delete(
   '/:noteId',
   celebrate({ params: noteIdSchema }),

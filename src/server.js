@@ -1,38 +1,33 @@
 import express from 'express';
-import { connectMongoDB } from './db/connectMongoDB.js';
-import { notesRouter } from './routes/notesRoutes.js';
-import { authRouter } from './routes/authRoutes.js';
-import { logger } from './middleware/logger.js';
-import { notFoundHandler } from './middleware/notFoundHandler.js';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { authRouter } from './routes/authRoutes.js';
+import notesRouter from './routes/notesRoutes.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { logger } from './middleware/logger.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(logger);
-app.use(cors());
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
 
-// Routes
-app.use('/notes', notesRouter);
 app.use('/auth', authRouter);
+app.use('/notes', notesRouter);
 
-// Not found middleware
 app.use(notFoundHandler);
 
-// Запуск сервера після підключення до MongoDB
-const startServer = async () => {
-  try {
-    await connectMongoDB();
+// Підключення до MongoDB перед стартом сервера
+connectMongoDB()
+  .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-  } catch (e) {
-    console.error('Failed to start server:', e);
-  }
-};
-
-startServer();
+  })
+  .catch((err) => {
+    console.error('Failed to connect to MongoDB', err);
+    process.exit(1);
+  });

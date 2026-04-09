@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { env } from '../env.js';
+const user = process.env.MONGODB_USER;
 
 export const connectMongoDB = async () => {
   try {

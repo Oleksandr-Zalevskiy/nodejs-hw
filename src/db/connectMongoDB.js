@@ -8,12 +8,17 @@ export const connectMongoDB = async () => {
     const url = env('MONGODB_URL');
     const db = env('MONGODB_DB');
 
-    await mongoose.connect(
-      `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority`,
-    );
+    // Формуємо рядок підключення.
+    // Переконайтеся, що в MongoDB Atlas дозволено доступ з усіх IP (0.0.0.0/0)
+    const connectionString = `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority`;
+
+    await mongoose.connect(connectionString);
+
     console.log('Mongo connection successfully established!');
   } catch (e) {
-    console.error('Error while setting up mongo connection', e);
-    process.exit(1); // Це змушує додаток вийти, якщо немає бази
+    console.error('Error while setting up mongo connection', e.message);
+    // Важливо: якщо база не підключилася, ми зупиняємо процес,
+    // щоб Render міг перезапустити додаток
+    process.exit(1);
   }
 };

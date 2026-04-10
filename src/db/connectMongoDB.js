@@ -1,22 +1,20 @@
 import mongoose from 'mongoose';
+import { env } from '../env.js'; // Тільки дві крапки і один слеш
 
 export const connectMongoDB = async () => {
   try {
-    const user = process.env.MONGODB_USER;
-    const pwd = process.env.MONGODB_PASSWORD;
-    const url = process.env.MONGODB_URL;
-    const db = process.env.MONGODB_DB;
-
-    if (!user || !pwd || !url || !db) {
-      throw new Error('MongoDB environment variables not set');
-    }
+    const user = env('MONGODB_USER');
+    const pwd = env('MONGODB_PASSWORD');
+    const url = env('MONGODB_URL');
+    const db = env('MONGODB_DB');
 
     const connectionString = `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority`;
 
     await mongoose.connect(connectionString);
-    console.log('MongoDB connected successfully!');
+
+    console.log('Mongo connection successfully established!');
   } catch (e) {
-    console.error('Error connecting to MongoDB:', e.message);
+    console.error('Error while setting up mongo connection:', e.message);
     process.exit(1);
   }
 };

@@ -1,12 +1,4 @@
-Давай оновимо src/routes/authRoutes.js, щоб він відповідав усім вимогам ментора. Основні моменти, які ми змінимо: додамо префікс /auth, підключимо схеми валідації через celebrate 🛡️ та виправимо імпорти (додамо .js).
-
-Ось як має виглядати структура роутера, щоб пройти перевірку:
-
-JavaScript
 import { Router } from 'express';
-import { celebrate } from 'celebrate';
-
-// Імпортуємо всі 4 функції з правильними назвами та розширенням .js
 import {
   registerUser,
   loginUser,
@@ -14,32 +6,17 @@ import {
   refreshUserSession,
 } from '../controllers/authController.js';
 
-// Імпортуємо схеми валідації (переконайся, що цей файл існує)
-import {
-  registerUserSchema,
-  loginUserSchema,
-} from '../validations/authValidation.js';
+import { authenticate } from '../middleware/authenticate.js';
 
-const router = Router();
+const authRouter = Router();
 
-// 1. Реєстрація: додаємо префікс /auth та валідацію body
-router.post(
-  '/auth/register',
-  celebrate({ body: registerUserSchema }),
-  registerUser,
-);
+authRouter.post('/register', registerUser);
+authRouter.post('/login', loginUser);
+authRouter.post('/logout', logoutUser);
+authRouter.post('/refresh', refreshUserSession);
 
-// 2. Логін: додаємо префікс /auth та валідацію body
-router.post(
-  '/auth/login',
-  celebrate({ body: loginUserSchema }),
-  loginUser,
-);
+authRouter.get('/me', authenticate, (req, res) => {
+  res.json({ user: req.user });
+});
 
-// 3. Логаут: новий маршрут з префіксом /auth
-router.post('/auth/logout', logoutUser);
-
-// 4. Рефреш: новий маршрут з префіксом /auth
-router.post('/auth/refresh', refreshUserSession);
-
-export default router;
+export default authRouter;

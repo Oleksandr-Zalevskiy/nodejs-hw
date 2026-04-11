@@ -1,4 +1,9 @@
 import { Router } from 'express';
+import { celebrate } from 'celebrate';
+import {
+  registerUserSchema,
+  loginUserSchema,
+} from '../validations/authValidation.js';
 import {
   registerUser,
   loginUser,
@@ -6,17 +11,15 @@ import {
   refreshUserSession,
 } from '../controllers/authController.js';
 
-import { authenticate } from '../middleware/authenticate.js';
+const router = Router();
 
-const authRouter = Router();
+router.post(
+  '/auth/register',
+  celebrate({ body: registerUserSchema }),
+  registerUser,
+);
+router.post('/auth/login', celebrate({ body: loginUserSchema }), loginUser);
+router.post('/auth/refresh', refreshUserSession);
+router.post('/auth/logout', logoutUser);
 
-authRouter.post('/register', registerUser);
-authRouter.post('/login', loginUser);
-authRouter.post('/logout', logoutUser);
-authRouter.post('/refresh', refreshUserSession);
-
-authRouter.get('/me', authenticate, (req, res) => {
-  res.json({ user: req.user });
-});
-
-export default authRouter;
+export default router;

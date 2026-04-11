@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { env } from '../env.js'; // Тільки дві крапки і один слеш
+import { env } from '../env.js';
 
 export const connectMongoDB = async () => {
   try {

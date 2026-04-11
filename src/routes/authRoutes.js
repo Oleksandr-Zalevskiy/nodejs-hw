@@ -3,17 +3,18 @@ import {
   registerController,
   loginController,
 } from '../controllers/authController.js';
+
 import { authenticate } from '../middleware/authenticate.js';
 
 const authRouter = Router();
 
-// реєстрація
+// register
 authRouter.post('/register', registerController);
 
-// логін
+// login
 authRouter.post('/login', loginController);
 
-// перевірка авторизації
+// protected route
 authRouter.get('/me', authenticate, (req, res) => {
   res.json({ user: req.user });
 });

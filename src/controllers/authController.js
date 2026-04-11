@@ -4,70 +4,49 @@ import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
 
-// 1. Реєстрація користувача
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
 
-  // Перевірка, чи користувач вже існує
   const user = await User.findOne({ email });
   if (user) {
-    throw createHttpError(409, 'Email in use');
+    // Ментор просив 400 замість 409
+    throw createHttpError(400, 'Email in use');
   }
 
-  // Хешування пароля
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Створення користувача
   const newUser = await User.create({
     ...req.body,
     password: hashedPassword,
   });
 
-  // Створення сесії
   const session = await createSession(newUser._id);
-
-  // Встановлення cookies
   setSessionCookies(res, session);
 
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully registered a user!',
-    data: { user: { email: newUser.email, name: newUser.name } },
-  });
+  // Повертаємо чистий об'єкт користувача
+  res.status(201).json(newUser);
 };
 
-// 2. Вхід користувача
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw createHttpError(404, 'User not found');
+    // Ментор просив 401 замість 404
+    throw createHttpError(401, 'Email or password invalid');
   }
 
-  // Перевірка пароля
-  const isPasswordCompare = await bcrypt.compare(password, user.password);
-  if (!isPasswordCompare) {
-    throw createHttpError(401, 'Unauthorized');
+  const isEqual = await bcrypt.compare(password, user.password);
+  if (!isEqual) {
+    throw createHttpError(401, 'Email or password invalid');
   }
 
-  // Видаляємо стару сесію перед створенням нової
   await Session.deleteOne({ userId: user._id });
-
-  // Створюємо нову сесію
   const session = await createSession(user._id);
-
-  // Встановлюємо cookies
   setSessionCookies(res, session);
 
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully logged in an user!',
-    data: { user: { email: user.email } },
-  });
+  res.status(200).json(user);
 };
 
-// 3. Вихід (Logout)
 export const logoutUser = async (req, res) => {
   if (req.cookies.sessionId) {
     await Session.deleteOne({ _id: req.cookies.sessionId });
@@ -80,30 +59,23 @@ export const logoutUser = async (req, res) => {
   res.status(204).send();
 };
 
-// 4. Оновлення сесії (Refresh)
 export const refreshUserSession = async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
 
   if (!sessionId || !refreshToken) {
-    throw createHttpError(401, 'Session not found or expired');
+    throw createHttpError(401, 'Session not found');
   }
 
-  // Тут має бути логіка перевірки сесії (зазвичай у сервісах)
   const session = await Session.findOne({ _id: sessionId, refreshToken });
 
   if (!session || new Date() > new Date(session.refreshTokenValidUntil)) {
-    throw createHttpError(401, 'Refresh token expired or invalid');
+    throw createHttpError(401, 'Session expired');
   }
 
-  // Видаляємо стару та створюємо нову
   await Session.deleteOne({ _id: sessionId });
   const newSession = await createSession(session.userId);
 
   setSessionCookies(res, newSession);
 
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully refreshed a session!',
-    data: { accessToken: newSession.accessToken },
-  });
+  res.status(200).json({ message: 'Success' });
 };

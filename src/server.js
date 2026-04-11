@@ -9,8 +9,7 @@ import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js'; // Не забудь додати цей імпорт
 import { logger } from './middleware/logger.js';
-import { env } from './env.js';
-
+const PORT = process.env.PORT || 3000;
 const app = express();
 const PORT = Number(env('PORT', '3000'));
 

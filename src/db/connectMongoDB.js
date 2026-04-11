@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { env } from '../env.js'; // Дві крапки - виходимо з db у src
+import { env } from '../env.js';
 
 export const connectMongoDB = async () => {
   try {

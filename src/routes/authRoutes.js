@@ -6,17 +6,12 @@ import {
 
 import { authenticate } from '../middleware/authenticate.js';
 
-const authRouter = Router();
+const router = Router();
 
-// register
-authRouter.post('/register', registerController);
-
-// login
-authRouter.post('/login', loginController);
-
-// protected route
-authRouter.get('/me', authenticate, (req, res) => {
+router.post('/register', registerController);
+router.post('/login', loginController);
+router.get('/me', authenticate, (req, res) => {
   res.json({ user: req.user });
 });
 
-export default authRouter;
+export default router;

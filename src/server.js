@@ -11,7 +11,6 @@ import { errorHandler } from './middleware/errorHandler.js'; // Не забуд�
 import { logger } from './middleware/logger.js';
 const PORT = process.env.PORT || 3000;
 const app = express();
-const PORT = Number(env('PORT', '3000'));
 
 app.use(logger);
 app.use(express.json());

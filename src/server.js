@@ -15,7 +15,6 @@ import { errorHandler } from './middleware/errorHandler.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// middleware
 app.use(logger);
 app.use(express.json());
 app.use(cors());
@@ -25,13 +24,10 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use(notesRouter);
 
-// celebrate errors
 app.use(errors());
 
-// 404
 app.use(notFoundHandler);
 
-// error handler
 app.use(errorHandler);
 
 // запуск

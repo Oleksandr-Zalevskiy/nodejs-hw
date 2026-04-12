@@ -1,20 +1,18 @@
 import mongoose from 'mongoose';
-import { env } from '../env.js';
+import { Note } from '../models/note.js';
 
 export const connectMongoDB = async () => {
   try {
-    // Ці назви мають бути ТАКИМИ Ж, як Key на Render
-    const user = env('MONGODB_USER');
-    const pwd = env('MONGODB_PASSWORD');
-    const url = env('MONGODB_URL');
-    const db = env('MONGODB_DB');
+    const mongoUrl = process.env.MONGO_URL;
 
-    const connectionString = `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority`;
+    await mongoose.connect(mongoUrl);
+    console.log('✅ MongoDB connection established successfully');
 
-    await mongoose.connect(connectionString);
-    console.log('Mongo connection successfully established!');
-  } catch (e) {
-    console.error('MongoDB connection error:', e.message);
+    await Note.syncIndexes();
+    console.log('✅ Indexes synced successfully');
+  } catch (error) {
+    console.error('❌ Failed to connect to MongoDB:', error.message);
+
     process.exit(1);
   }
 };

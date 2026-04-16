@@ -1,9 +1,8 @@
-import createHttpError from 'http-errors';
-import bcrypt from 'bcrypt';
-import User from '../models/user.js';
-import { Session } from '../models/session.js';
-import { createSession, setSessionCookies } from '../services/auth.js';
 import jwt from 'jsonwebtoken';
+import fs from 'fs/promises';
+import path from 'path';
+import handlebars from 'handlebars';
+import createHttpError from 'http-errors';
 import { sendEmail } from '../utils/sendMail.js';
 
 export const registerUser = async (req, res) => {

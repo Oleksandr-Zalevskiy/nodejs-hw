@@ -6,6 +6,7 @@ import { errors } from 'celebrate';
 
 import authRouter from './routes/authRoutes.js';
 import notesRouter from './routes/notesRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
 

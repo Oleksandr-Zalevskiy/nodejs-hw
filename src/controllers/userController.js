@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import User from '../models/user.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const updateUserAvatar = async (req, res) => {
   if (!req.file) {
@@ -12,10 +12,10 @@ export const updateUserAvatar = async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { avatar: result.secure_url },
-    { new: true },
+    { returnDocument: 'after' },
   );
 
-  res.json({
+  res.status(200).json({
     url: user.avatar,
   });
 };

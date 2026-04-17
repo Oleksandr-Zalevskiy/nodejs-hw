@@ -11,7 +11,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 import { errors } from 'celebrate';
 
-import connectDB from './db/connect.js';
+import { connectMongoDB } from './db/connect.js';
 
 const app = express();
 
@@ -19,7 +19,6 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-// ❗ ВАЖЛИВО
 app.use(authRoutes);
 app.use(userRoutes);
 
@@ -29,7 +28,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-connectDB().then(() => {
+connectMongoDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

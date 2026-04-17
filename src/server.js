@@ -11,7 +11,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 import { errors } from 'celebrate';
 
-import { connectMongoDB } from './db/connect.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
 
 const app = express();
 

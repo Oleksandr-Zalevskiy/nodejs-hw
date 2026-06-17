@@ -1,37 +1,38 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import 'dotenv/config';
 
-import { connectMongoDB } from './db/connectMongoDB.js';
-import { logger } from './middleware/logger.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import notesRoutes from './routes/notesRoutes.js'; // Має бути тут
+
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import notesRouter from './routes/notesRoutes.js';
+import { logger } from './middleware/logger.js'; // Має бути тут
 
-dotenv.config();
+import { errors } from 'celebrate';
+import { connectMongoDB } from './db/connectMongoDB.js';
 
-const PORT = Number(process.env.PORT) || 3000;
+const app = express();
 
-const bootstrap = async () => {
-  await connectMongoDB();
+app.use(logger); // Має бути тут
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
 
-  const app = express();
+app.use(authRoutes);
+app.use(userRoutes);
+app.use(notesRoutes); // Має бути тут
 
-  app.use(logger);
-  app.use(cors());
-  app.use(express.json());
+app.use(notFoundHandler);
+app.use(errors());
+app.use(errorHandler);
 
-  app.use(notesRouter);
+const PORT = process.env.PORT || 3000;
 
-  app.use(notFoundHandler);
-  app.use(errorHandler);
-
+connectMongoDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
   });
-};
-
-bootstrap().catch((error) => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
 });
